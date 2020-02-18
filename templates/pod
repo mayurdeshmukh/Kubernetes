@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: nginx-deployment
+    labels:
+        app: nginx
+
+spec:
+  replicas: 3
+  selector:
+     matchLabels:
+        app: mayur
+  template:
+     metadata:
+        labels:
+          app: mayur
+
+     spec:
+        containers:
+        - name: mynginx
+          image: nginx
+          ports:
+          - containerPort: 80
+
