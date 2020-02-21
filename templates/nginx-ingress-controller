@@ -1,0 +1,11 @@
+Source link https://github.com/kubernetes/ingress-nginx/blob/master/docs/deploy/index.md
+
+Prerequisite Generic Deployment Command
+The following Mandatory Command is required for all deployments.
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.29.0/deploy/static/mandatory.yaml
+
+on Bare metal kubectl apply -f 
+https://raw.githubusercontent.com/kubernetes/ingress-nginx/nginx-0.29.0/deploy/static/provider/baremetal/service-nodeport.yaml
+
+check installation 
+kubectl get pods --all-namespaces 
