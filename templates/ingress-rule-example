@@ -1,3 +1,50 @@
+Deploment Example
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: apache-deployment
+    labels:
+        app: apache-deployment
+
+spec:
+  replicas: 3
+  selector:
+     matchLabels:
+        app: apache-deployment
+  template:
+     metadata:
+        labels:
+          app: apache-deployment
+
+     spec:
+        containers:
+        - name: httpd-app
+          image: httpd
+          ports:
+          - containerPort: 80
+    
+  ------------------------------------------------
+Service Example
+
+apiVersion: v1
+kind: Service
+metadata:
+   name: apache-service
+   labels:
+     app: apache-service
+spec:
+   selector:
+      app: apache-deployment
+   type: NodePort
+   ports:
+     - nodePort: 30089
+       port: 80
+       targetPort: 80
+
+-----------------------------------
+Ingress Example
+
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -11,5 +58,10 @@ spec:
      path:
      - path: /mayur
        backend:
-        serviceName: nginx-ingress
+        serviceName: apache-ingress
         servicePort: 80
+
+
+------------------------------------------------------------------------------
+
+              
