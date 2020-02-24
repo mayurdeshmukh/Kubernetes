@@ -58,7 +58,7 @@ spec:
      path:
      - path: /mayur
        backend:
-        serviceName: apache-ingress
+        serviceName: apache-service
         servicePort: 80
 
 
