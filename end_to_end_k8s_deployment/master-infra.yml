@@ -1,0 +1,2 @@
+ - import_playbook: master-ec2.yml
+  - import_playbook: node-ec2.yml
