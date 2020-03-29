@@ -1,0 +1,24 @@
+---
+- hosts: worker
+  become: yes
+  remote_user: centos
+  become_method: sudo
+  vars_files:
+  - env_variables
+  tasks:
+  - name: Copying token to worker nodes
+    copy: src={{ token_file }} dest=join_token
+
+  - name: Joining worker nodes with kubernetes master
+    shell:
+         grep 'kubeadm join\|--disco' join_token | tr -d '\n' > joinfile
+
+  - name: Create shell script
+    shell: cat joinfile | tr -d '{{ check }}' > join.sh
+
+
+  - name: Assign execute permission to script
+    command: chmod +x join.sh
+
+  - name: Execute script
+    command: bash join.sh
