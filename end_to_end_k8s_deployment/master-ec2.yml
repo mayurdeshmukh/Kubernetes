@@ -1,0 +1,49 @@
+---
+  - name: Launch ec2 instance on AWS
+    hosts: localhost
+    vars_files:
+    - env_variables
+    tasks:
+    - pip:
+        name:
+        - boto
+        - botocore
+        - boto3
+
+    - name: launch ec2
+      ec2:
+              #       instance_name: Jboss
+       key_name: poc
+       region: us-east-1
+       instance_type: t2.medium
+       vpc_subnet_id: "{{ vpc_subnet_id }}"
+       wait: yes
+       assign_public_ip: yes
+       image: ami-006219aba10688d0b
+       group: default
+       aws_access_key: "{{access_key}}"
+       aws_secret_key: "{{secret_key}}"
+       count: 1
+      register: ec2
+
+    - name: Add tag to Instance(s)
+      ec2_tag:
+        aws_access_key: "{{access_key}}"
+        aws_secret_key: "{{secret_key}}"
+        resource: "{{ item.id }}"
+        region: us-east-1
+        state: "present"
+      with_items: "{{ ec2.instances }}"
+      args:
+        tags:
+          Type: K8S Master
+
+    - name: Add the newly created EC2 instance(s) to the local host group (located inside the directory)
+      local_action: lineinfile
+                    dest="/home/cloud_user/ansible/POC/hosts"
+                    regexp={{ item.public_ip }}
+                    insertbefore="[worker]" line={{ item.public_ip }}
+      with_items: "{{ ec2.instances }}"
+
+    - name: Refresh inventory to ensure new instaces exist in inventory
+      meta: refresh_inventory
