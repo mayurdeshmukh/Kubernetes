@@ -1,0 +1,27 @@
+---
+- hosts: master:worker
+  remote_user: centos
+  become: yes
+  become_method: sudo
+  vars_files:
+  - env_variables
+  tasks:
+  - name: Disabling Swap on all nodes
+    shell: swapoff -a
+
+  - name: Commenting Swap entries in /etc/fstab
+    replace:
+     path: /etc/fstab
+     regexp: '(.*swap*)'
+     replace: '#\1'
+
+  - name: Put SELinux in permissive mode, logging actions that would be blocked.
+    selinux:
+     policy: targeted
+     state: permissive
+
+  - name: run command setenforce0
+    command: setenforce 0
+
+  - name: creating directoy on master and node for persistent volumes
+    shell: mkdir /opt/alertmanager /opt/prometheus /opt/grafana
