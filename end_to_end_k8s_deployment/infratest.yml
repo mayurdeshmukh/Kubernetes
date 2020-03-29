@@ -1,0 +1,38 @@
+---
+  - name: InfraTesting
+    hosts: master:worker
+    remote_user: centos
+    become: yes
+    become_method: sudo
+
+
+    tasks:
+    - name: Copy infra Script to remote machine
+      copy:
+        src: /home/cloud_user/ansible/POC/playbooks/test.py
+        dest: /home/centos
+#        remote_src: yes
+#
+    - name : Install epel release
+      yum:
+       name: epel-release
+       state: latest
+
+
+    - name : Install intratest
+      yum:
+       name: python-testinfra
+       state: latest
+
+    - name: install pip
+      shell: yum install python2-pip -y
+
+    - name: install pytest
+      shell: pip install --upgrade pip
+
+    - name: install pytest
+      shell: pip install pytest
+
+    - name: Performing Infra Testing
+      shell: sudo pytest /home/centos/test.py -v | grep  "PASSED" > infra-details.`date | tr ' ' '-'`.txt
+      tags: test
