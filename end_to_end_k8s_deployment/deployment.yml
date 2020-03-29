@@ -1,0 +1,16 @@
+---
+- hosts: master
+  remote_user: centos
+  become: yes
+  become_method: sudo
+  tasks:
+  - name:  Setting secrets for private docker registry
+    shell: kubectl create secret docker-registry myregistry --docker-server=docker.io --docker-username=mayurdeshh7 --docker-password=
+
+  - name: Copy k8s deployment remote machine
+    copy:
+       src: /home/cloud_user/ansible/POC/playbooks/k8s/app.yml
+       dest: /home/centos
+
+  - name: Copy k8s deployment remote machine
+    shell: sudo kubectl apply -f /home/centos/app.yml
