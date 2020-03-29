@@ -1,0 +1,23 @@
+---
+- hosts: master
+  remote_user: centos
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: Create namespace for prometheus
+    shell: kubectl create namespace metrics
+
+  - name: Applying config file for pv alertmanager
+    shell: kubectl apply -f /home/centos/monitoring/alertmanager-pv.yml
+
+  - name: Applying config file for pv prometheus
+    shell: kubectl apply -f /home/centos/monitoring/prometheus-pv.yml
+
+  - name: Applying config file for pv grafana
+    shell: kubectl apply -f /home/centos/monitoring/pv-grafna.yml
+
+  - name: Applying config file for prometheus installation
+    shell: helm install prometheus stable/prometheus --namespace metrics -f /home/centos/monitoring/value.yml
+
+  - name: Applying config file for grafana installation
+    shell: helm install grafana stable/grafana --namespace metrics -f /home/centos/monitoring/grafa-value.yml
