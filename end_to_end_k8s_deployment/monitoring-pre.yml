@@ -1,0 +1,52 @@
+---
+- hosts: master
+  remote_user: centos
+  become: yes
+  become_method: sudo
+  vars_files:
+  - env_variables
+
+  tasks:
+  - name: Download Helm from remote source
+    get_url:
+      url: https://get.helm.sh/helm-v3.1.0-linux-amd64.tar.gz
+      dest: /home/centos
+
+  - name: extract package
+    shell: tar xvfz /home/centos/helm-v3.1.0-linux-amd64.tar.gz
+
+  - name: Move command
+    shell: mv /home/centos/linux-amd64/helm /usr/bin/helm
+
+  - name: add repo
+    shell: helm repo add stable https://kubernetes-charts.storage.googleapis.com
+
+  - name: update repo
+    shell: helm repo update
+
+# Directories were created in prerequisites.yml
+#  - name: creating directoy on master and node for persistent volumes
+#    shell: mkdir /opt/alertmanager /opt/prometheus /opt/grafana
+
+  - name: Ansible copy directory to the remote server
+    copy:
+      src: /home/cloud_user/ansible/POC/playbooks/monitoring
+      dest: /home/centos/
+
+  - name: Adding hostname of worker in file
+    lineinfile:
+       path: /home/centos/monitoring/alertmanager-pv.yml
+       insertafter: values
+       line: "          - {{worker}}"
+
+  - name: Adding hostname of worker in file
+    lineinfile:
+       path: /home/centos/monitoring/prometheus-pv.yml
+       insertafter: values
+       line: "          - {{worker}}"
+
+  - name: Adding hostname of worker in file
+    lineinfile:
+       path: /home/centos/monitoring/pv-grafna.yml
+       insertafter: values
+       line: "          - {{worker}}"
