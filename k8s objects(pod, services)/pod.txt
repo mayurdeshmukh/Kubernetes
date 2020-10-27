@@ -1,0 +1,28 @@
+Create Kubernetes Pod using a command(imperative approach)
+
+Syntax: kubectl run <pod name> --generator=run-pod/v1 --image=<container image name> --port=<container port> --labels="<value1>,<value2>" 
+Example: kubectl run test-pod --generator=run-pod/v1 --image=nginx --port=80 --labels="app=web,env=dev" 
+
+Check the status of the pod
+kubectl get pod
+
+To check the details of the pod
+kubectl describe pod pod_name
+
+To check the logs of the pod
+kubectl logs Pod_name
+
+
+
+CREATING POD WITH LABELS USING YAML (declarative approach)
+apiVersion: v1
+kind: Pod
+metadata:
+    name: test-pod
+    labels:
+       app: web
+       env: test
+spec:
+     containers:
+        - name: test-cont
+          image: nginx
